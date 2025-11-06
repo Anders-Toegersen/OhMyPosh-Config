@@ -1,0 +1,100 @@
+version = 3
+final_space = true
+console_title_template = '{{ if .Root }}Admin {{ end }}{{ .Shell }} in {{ .Folder }}'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    type = 'path'
+    template = '{{ .Path }}'
+    style = 'plain'
+    foreground = 'lightGreen'
+    background = 'transparent'
+
+    [blocks.segments.properties]
+      style = 'agnoster_short'
+      max_depth = 3
+      hide_root_location = true
+
+  [[blocks.segments]]
+    type = 'git'
+    template = ' {{ regexReplaceAll "^.*/(.+)$" .HEAD "${1}" }}{{ if or .Staging.Changed .Working.Changed }}*{{ end }} {{ .BranchStatus }}'
+    style = 'plain'
+    foreground = 'cyan'
+    background = 'transparent'
+    foreground_templates = [
+        '{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}', 
+        '{{ if or (gt .Ahead 0) (gt .Behind 0) }}yellow{{ end }}'
+      ]
+
+    [blocks.segments.properties]
+      fetch_status = true
+      branch_icon = ''
+
+  [[blocks.segments]]
+    type = 'executiontime'
+    template = ' {{ .FormattedMs }}'
+    style = 'plain'
+    foreground = 'lightMagenta'
+
+    [blocks.segments.properties]
+      style = 'austin'
+      threshold = 500
+
+  [[blocks.segments]]
+    type = 'exit'
+    template = ' {{ .Meaning }}'
+    style = 'plain'
+    foreground = 'lightRed'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'right'
+
+  [[blocks.segments]]
+    type = 'time'
+    style = 'plain'
+    foreground = 'lightMagenta'
+
+    [blocks.segments.properties]
+      time_format = '15:04:05'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    foreground_templates = [
+      "{{if gt .Code 0}}lightRed{{end}}",
+      "{{if eq .Code 0}}lightGreen{{end}}",
+    ]
+    background = 'transparent'
+    template = '❯ '
+
+[transient_prompt]
+  foreground_templates = [
+    "{{if gt .Code 0}}lightRed{{end}}",
+    "{{if eq .Code 0}}lightGreen{{end}}",
+  ]
+  background = 'transparent'
+  template = '❯ '
+
+[secondary_prompt]
+  foreground = 'lightGreen'
+  background = 'transparent'
+  template = '❯❯ '
+
+[[tooltips]]
+  type = "az"
+  template = '<cyan>{{ .User.Name }}</> at <green>{{ .Name }}({{ .TenantID }})</>'
+  style = "plain"
+  tips = [ "az", "terraform" ]
+
+  [blocks.segments.properties]
+    source = "cli"
