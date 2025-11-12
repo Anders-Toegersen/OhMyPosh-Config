@@ -26,8 +26,8 @@ console_title_template = '{{ if .Root }}Admin {{ end }}{{ .Shell }} in {{ .Folde
     foreground = 'cyan'
     background = 'transparent'
     foreground_templates = [
-        '{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}', 
-        '{{ if or (gt .Ahead 0) (gt .Behind 0) }}yellow{{ end }}'
+		'{{ if (gt .Behind 0) }}lightRed{{ end }}',
+		'{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}'
       ]
 
     [blocks.segments.properties]
