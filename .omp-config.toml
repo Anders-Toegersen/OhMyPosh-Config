@@ -21,13 +21,13 @@ console_title_template = '{{ if .Root }}Admin {{ end }}{{ .Shell }} in {{ .Folde
 
   [[blocks.segments]]
     type = 'git'
-    template = ' {{ regexReplaceAll "^.*/(.+)$" .HEAD "${1}" }}{{ if or .Staging.Changed .Working.Changed }}*{{ end }} {{ .BranchStatus }}'
+	template = ' {{ regexReplaceAll "^.*/(.+)$" .HEAD "${1}" }}{{ if .Working.Changed }} ∗{{ add .Working.Added .Working.Modified .Working.Deleted .Working.Untracked }}{{ end }}{{ if .Staging.Changed }} +{{ add .Staging.Added .Staging.Modified .Staging.Deleted }}{{ end }} {{ .BranchStatus }}'
     style = 'plain'
     foreground = 'cyan'
     background = 'transparent'
     foreground_templates = [
 		'{{ if (gt .Behind 0) }}lightRed{{ end }}',
-		'{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}'
+		'{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}',
       ]
 
     [blocks.segments.properties]
@@ -92,9 +92,9 @@ console_title_template = '{{ if .Root }}Admin {{ end }}{{ .Shell }} in {{ .Folde
 
 [[tooltips]]
   type = "az"
-  template = '<cyan>{{ .User.Name }}</> at <green>{{ .Name }}({{ .TenantID }})</>'
+  template = '<cyan>{{ .User.Name }}</> at <green>{{ .Name }}</>'
   style = "plain"
   tips = [ "az", "terraform" ]
 
-  [blocks.segments.properties]
+  [tooltips.properties]
     source = "cli"
