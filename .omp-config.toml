@@ -21,18 +21,33 @@ console_title_template = '{{ if .Root }}Admin {{ end }}{{ .Shell }} in {{ .Folde
 
   [[blocks.segments]]
     type = 'git'
-	template = ' {{ regexReplaceAll "^.*/(.+)$" .HEAD "${1}" }}{{ if .Working.Changed }} ∗{{ add .Working.Added .Working.Modified .Working.Deleted .Working.Untracked }}{{ end }}{{ if .Staging.Changed }} +{{ add .Staging.Added .Staging.Modified .Staging.Deleted }}{{ end }} {{ .BranchStatus }}'
-    style = 'plain'
+    template = ' {{ regexReplaceAll "^.*/(.+)$" .HEAD "${1}" }}{{ if gt .Working.Unmerged 0 }} !{{ .Working.Unmerged }}{{ end }}{{ if gt (add .Working.Added .Working.Modified .Working.Deleted .Working.Untracked) 0 }} ∗{{ add .Working.Added .Working.Modified .Working.Deleted .Working.Untracked }}{{ end }}{{ if gt (add .Staging.Added .Staging.Modified .Staging.Deleted) 0 }} +{{ add .Staging.Added .Staging.Modified .Staging.Deleted }}{{ end }} {{ .BranchStatus }}'
+	style = 'plain'
     foreground = 'cyan'
     background = 'transparent'
     foreground_templates = [
-		'{{ if (gt .Behind 0) }}lightRed{{ end }}',
-		'{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}',
+		'{{ if .Merge }}lightMagenta{{ end }}',
+		'{{ if .Rebase }}lightMagenta{{ end }}',
+		'{{ if .CherryPick }}lightMagenta{{ end }}',
+		'{{ if .Revert }}lightMagenta{{ end }}',
+		'{{ if .Detached }}lightRed{{ end }}',
+		'{{ if gt .Behind 0 }}lightRed{{ end }}',
+		'{{ if .Working.Changed }}yellow{{ end }}',
+		'{{ if .Staging.Changed }}yellow{{ end }}'
       ]
 
     [blocks.segments.properties]
+	  source = "cli"
       fetch_status = true
+	  fetch_push_status = true
       branch_icon = ''
+	  commit_icon = ''
+	  tag_icon = ''
+	  rebase_icon = ''
+	  cherry_pick_icon = ''
+	  revert_icon = ''
+	  merge_icon = ''
+	  no_commits_icon = ''
 
   [[blocks.segments]]
     type = 'executiontime'
